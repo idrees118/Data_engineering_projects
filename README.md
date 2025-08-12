@@ -39,9 +39,5 @@ The main goal of this project is to build a reliable and reproducible data pipel
 
 ---
 
-## Running the Project
 
-1. Clone the repository  
-   ```bash
-   git clone https://github.com/yourusername/weather-etl-pipeline.git
-   cd weather-etl-pipeline
+ 
