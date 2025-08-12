@@ -33,21 +33,41 @@ def load_weather_data(df):
         for _, row in df.iterrows():
             conn.execute(
                 text("""
-                INSERT INTO weather_data (timestamp, temperature_celsius, windspeed_kph)
-                VALUES (:timestamp, :temperature_celsius, :windspeed_kph)
+                INSERT INTO weather_data (timestamp, temperature_celsius, windspeed_kph, location)
+                VALUES (:timestamp, :temperature_celsius, :windspeed_kph, :location)
                 ON CONFLICT (timestamp) DO NOTHING
                 """),
                 {
                     "timestamp": row["timestamp"],
                     "temperature_celsius": row["temperature_celsius"],
-                    "windspeed_kph": row["windspeed_kph"]
+                    "windspeed_kph": row["windspeed_kph"],
+                    "location": row["location"]
                 }
             )
+
+
+def transform_weather_data(data):
+    """Transform API response into DataFrame."""
+    hourly = data["hourly"]
+    df = pd.DataFrame({
+        "timestamp": hourly["time"],
+        "temperature_celsius": hourly["temperature_2m"],
+        "windspeed_kph": hourly["windspeed_10m"]
+    })
+    # Add this line to add location column with fixed value "Peshawar"
+    df["location"] = "Peshawar"
+    return df
+
 
 if __name__ == "__main__":
     print("Fetching weather data...")
     data = fetch_weather_data()
     df = transform_weather_data(data)
     print(f"Fetched {len(df)} records.")
+
+    # Save the fetched data to CSV inside your project folder
+    df.to_csv("weather_data_sample.csv", index=False)
+    print("Data saved to weather_data_sample.csv")
+
     load_weather_data(df)
     print("Data loaded into database.")

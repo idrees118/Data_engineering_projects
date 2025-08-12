@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
 import config
+import os
 
 def get_engine() -> Engine:
     """Create a SQLAlchemy engine for PostgreSQL."""
